@@ -79,26 +79,6 @@ public class SecurityConfig {
                                 .UsernamePasswordAuthenticationFilter.class)
                 .httpBasic(b -> b.disable())
                 .formLogin(f -> f.disable());
-//                .authorizeHttpRequests(auth -> auth
-//                        .requestMatchers("/auth/**").permitAll()
-//                        .requestMatchers("/vaccine/getAll", "/vaccine/get/**", "/vaccine/doctor/**").permitAll()
-//                        .requestMatchers("/doctor/getAll", "/user/getAll").permitAll()
-//                        .requestMatchers("/vaccinationCenter/getAll").permitAll()
-//                        .requestMatchers("/dose/**").permitAll()
-//                        // Use string matchers for role-based as well
-//                        .requestMatchers("/user/**", "/appointment/book").hasAnyRole("USER", "ADMIN")
-//                        .requestMatchers("/doctor/add", "/doctor/associateWithCenter", "/doctor/**").hasRole("ADMIN")
-//                        .requestMatchers("/vaccinationCenter/**", "/vaccine/**").hasRole("ADMIN")
-//                        .anyRequest().authenticated())
-//                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-//                .httpBasic(basic -> basic.disable())
-//                .formLogin(form -> form.disable())
-//                .exceptionHandling(exceptions -> exceptions
-//                        .authenticationEntryPoint((request, response, authException) -> {
-//                            response.setStatus(jakarta.servlet.http.HttpServletResponse.SC_UNAUTHORIZED);
-//                            response.setHeader("WWW-Authenticate", "None");
-//                            response.getWriter().write("{\"message\": \"Unauthorized - Please Login\"}");
-//                        }));
 
         return http.build();
     }
