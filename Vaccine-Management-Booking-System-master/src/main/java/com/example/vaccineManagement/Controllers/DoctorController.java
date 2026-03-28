@@ -40,7 +40,7 @@ public class DoctorController {
         }
     }
 
-    // doctor List is here
+    // doctor List 
     @GetMapping("/getAll")
     public ResponseEntity<List<Doctor>> getAllDoctors(){
 
@@ -48,7 +48,6 @@ public class DoctorController {
             List<Doctor> doctorList = doctorService.getAllDoctors();
             return new ResponseEntity<>(doctorList, HttpStatus.OK);
         } catch (Exception e) {
-            // Agar koi error aata hai to
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
