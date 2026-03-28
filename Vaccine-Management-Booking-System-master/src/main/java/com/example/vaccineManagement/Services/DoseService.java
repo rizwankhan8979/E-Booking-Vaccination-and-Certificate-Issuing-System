@@ -24,20 +24,11 @@ public class DoseService {
             return "User already has a dose assigned.";
         }
 
-        // An Entity of that model has been created
-        // This entity will be saved in the database
         Dose dose = new Dose();
-
-        // setting its attributes
         dose.setDoseId(doseId);
         dose.setUser(user);
-
-        // Setting the child object in that corresponding
         user.setDose(dose);
-
         userRepository.save(user);
-
-        // Child will automatically get saved because of cascading effect.
 
         return "Dose Given to user successfully";
     }
