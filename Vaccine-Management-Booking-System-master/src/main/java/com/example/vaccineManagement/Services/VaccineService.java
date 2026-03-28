@@ -20,14 +20,12 @@ public class VaccineService {
 
     @Autowired
     private DoctorRepository doctorRepository;
-
-    // Step 1: Add vaccine independently
+    
     public String addVaccine(Vaccine vaccine) {
         vaccineRepository.save(vaccine);
         return "Vaccine added successfully!";
     }
 
-    // Step 2: Associate an existing vaccine with doctor
     public String associateVaccineWithDoctor(int vaccineId, int doctorId)
             throws VaccineNotFound, DoctorNotFound {
 
@@ -44,10 +42,10 @@ public class VaccineService {
         Vaccine vaccine = vaccineOpt.get();
         Doctor doctor = doctorOpt.get();
 
-        vaccine.setDoctor(doctor);                   // Set doctor in vaccine
-        doctor.getVaccineList().add(vaccine);        // Add vaccine to doctor's list
-
-        vaccineRepository.save(vaccine);             // Persist mapping
+        vaccine.setDoctor(doctor);                 
+        doctor.getVaccineList().add(vaccine);        
+        vaccineRepository.save(vaccine);             
+                
         return "Vaccine '" + vaccine.getVaccineName() + "' linked with Doctor: " + doctor.getName();
     }
 
@@ -62,7 +60,6 @@ public class VaccineService {
                 .orElseThrow(() -> new VaccineNotFound("Vaccine not found with id: " + id));
     }
 
-    //Get vaccines of a specific doctor
     public List<Vaccine> getVaccinesByDoctorId(int doctorId) {
         return vaccineRepository.findByDoctor_DocId(doctorId);
     }
