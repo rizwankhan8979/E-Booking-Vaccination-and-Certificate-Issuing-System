@@ -25,7 +25,7 @@ public class AuthController {
     @Autowired
     private  JwtService jwtService;
 
-    // ================= REGISTER =================
+    //REGISTER
     @PostMapping("/register")
     public ResponseEntity<AuthResponseDto> register(@RequestBody RegisterRequestDto dto) {
         try {
@@ -44,21 +44,7 @@ public class AuthController {
     }
 
 
-
-//    // REGISTER
-//    @PostMapping("/register")
-//    public ResponseEntity<AuthResponseDto> register(@RequestBody RegisterRequestDto dto) {
-//        try {
-//            String result = authService.register(dto);
-//            return new ResponseEntity<>(new AuthResponseDto(result), HttpStatus.CREATED);
-//        } catch (Exception e) {
-//            return new ResponseEntity<>(new AuthResponseDto(e.getMessage()), HttpStatus.BAD_REQUEST);
-//        }
-//    }
-
-
-
-    // ================= VERIFY EMAIL =================
+    //VERIFY EMAIL
     @PostMapping("/verify-email")
     public ResponseEntity<AuthResponseDto> verifyEmail(@RequestBody VerifyOtpDto dto) {
         try {
@@ -75,18 +61,6 @@ public class AuthController {
         }
     }
 
-
-
-//    // OTP VERIFY
-//    @PostMapping("/verify-email")
-//    public ResponseEntity<AuthResponseDto> verifyEmail(@RequestBody VerifyOtpDto dto) {
-//        try {
-//            String msg = authService.verifyEmail(dto.getEmail(), dto.getOtp());
-//            return new ResponseEntity<>(new AuthResponseDto(msg), HttpStatus.OK);
-//        } catch (Exception e) {
-//            return new ResponseEntity<>(new AuthResponseDto(e.getMessage()), HttpStatus.BAD_REQUEST);
-//        }
-//    }
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponseDto> login(@RequestBody LoginRequestDto dto) {
@@ -105,7 +79,7 @@ public class AuthController {
         );
     }
 
-    // ================= UPDATE EMAIL =================
+    //UPDATE EMAIL
     @PutMapping("/update-email")
     public ResponseEntity<AuthResponseDto> updateEmail(
             @AuthenticationPrincipal org.springframework.security.core.userdetails.User principal,
@@ -124,22 +98,7 @@ public class AuthController {
         }
     }
 
-//    // update email
-//    @PutMapping("/update-email")
-//    public ResponseEntity<AuthResponseDto> updateEmail(
-//            @AuthenticationPrincipal org.springframework.security.core.userdetails.User principal,
-//            @RequestBody UpdateEmailRequestDto dto) {
-//        try {
-//            String result = authService.updateEmail(principal.getUsername(), dto);
-//            return new ResponseEntity<>(new AuthResponseDto(result), HttpStatus.OK);
-//        } catch (Exception e) {
-//            return new ResponseEntity<>(new AuthResponseDto(e.getMessage()), HttpStatus.BAD_REQUEST);
-//        }
-//    }
-
-
-
-    // ================= VERIFY UPDATE OTP =================
+    //VERIFY UPDATE OTP 
     @PostMapping("/verify-update-otp")
     public ResponseEntity<AuthResponseDto> verifyUpdateOtp(
             @AuthenticationPrincipal org.springframework.security.core.userdetails.User principal,
@@ -162,20 +121,7 @@ public class AuthController {
         }
     }
 
-
-//    @PostMapping("/verify-update-otp")
-//    public ResponseEntity<AuthResponseDto> verifyUpdateOtp(
-//            @AuthenticationPrincipal org.springframework.security.core.userdetails.User principal,
-//            @RequestBody VerifyUpdateEmailDto dto) {
-//        try {
-//            String result = authService.verifyUpdateEmail(principal.getUsername(), dto.getNewEmail(), dto.getOtp());
-//            return new ResponseEntity<>(new AuthResponseDto(result), HttpStatus.OK);
-//        } catch (Exception e) {
-//            return new ResponseEntity<>(new AuthResponseDto(e.getMessage()), HttpStatus.BAD_REQUEST);
-//        }
-//    }
-
-    // ================= FIND BY EMAIL =================
+    //FIND BY EMAIL
     @GetMapping("/by-email/{email}")
     public ResponseEntity<?> findByEmail(@PathVariable String email) {
         try {
@@ -188,16 +134,5 @@ public class AuthController {
             );
         }
     }
-
-//    // find by email
-//    @GetMapping("/by-email/{email}")
-//    public ResponseEntity<?> findByEmail(@PathVariable String email) {
-//        try {
-//            AuthUser authUser = authService.findByEmail(email);
-//            return new ResponseEntity<>(authUser, HttpStatus.OK);
-//        } catch (Exception e) {
-//            return new ResponseEntity<>(new AuthResponseDto(e.getMessage()), HttpStatus.NOT_FOUND);
-//        }
-//    }
 
 }
