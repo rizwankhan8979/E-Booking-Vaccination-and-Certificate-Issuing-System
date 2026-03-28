@@ -33,8 +33,8 @@ public class Appointment {
 
     @ManyToOne
     @JoinColumn
-    private Vaccine vaccine; // ✅ ADD THIS
-
+    private Vaccine vaccine; 
+    
     @JsonIgnore
     @ManyToOne
     @JoinColumn
