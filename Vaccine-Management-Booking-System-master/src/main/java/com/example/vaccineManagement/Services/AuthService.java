@@ -28,15 +28,10 @@ public class AuthService {
 
     //OTP Store
     private final Map<String, Integer> otpStore = new ConcurrentHashMap<>();
-
-    //Temporary User Store
-    // Ye data ko tab tak hold karega jab tak verify na ho jaye
     private final Map<String, AuthUser> tempUserStore = new ConcurrentHashMap<>();
 
     //Register Send Otp not save in Database
     public String register(RegisterRequestDto dto) {
-
-        // Check karo ki User pehle se verify hokar DB mein to nahi hai?
         if (authUserRepository.findByEmail(dto.getEmail()).isPresent()) {
             throw new RuntimeException("Email already registered and verified!");
         }
@@ -46,25 +41,20 @@ public class AuthService {
         authUser.setEmail(dto.getEmail());
         authUser.setPassword(passwordEncoder.encode(dto.getPassword()));
         authUser.setRole(Role.USER);
-        authUser.setEmailVerified(true); // Verify hone par hi save hoga, isliye true set kar rahe hain
+        authUser.setEmailVerified(true);
 
         // OTP Generate karo
         int otp = new Random().nextInt(900000) + 100000;
-        // Data ko TEMPORARY MAP mein daalo (Database mein nahi)
         otpStore.put(dto.getEmail(), otp);
-        tempUserStore.put(dto.getEmail(), authUser); //Yahan data hold ho raha hai
-        // Email bhejo
+        tempUserStore.put(dto.getEmail(), authUser);
         emailService.sendOtpEmail(dto.getEmail(), otp);
         return "OTP sent to email. Data is in temporary storage waiting for verification.";
     }
 
 
-    //After Verification Data Store in database
     public String verifyEmail(String email, int otp) {
-
-        //Check karo OTP hai ya nahi
         Integer storedOtp = otpStore.get(email);
-        AuthUser tempUser = tempUserStore.get(email);//get user detail here
+        AuthUser tempUser = tempUserStore.get(email);
 
         System.out.println("DEBUGGING OTP VERIFICATION ");
         System.out.println("Email: " + email);
@@ -100,11 +90,8 @@ public class AuthService {
         if (tempUser == null) {
             throw new RuntimeException("Session expired, please register again");
         }
-
-        //FINAL STEP: Ab Database mein Save karo
+        
         authUserRepository.save(tempUser);
-
-        //Safai karo (Maps khali karo)
         otpStore.remove(email);
         tempUserStore.remove(email);
 
@@ -119,17 +106,12 @@ public class AuthService {
         if (!passwordEncoder.matches(dto.getPassword(), authUser.getPassword())) {
             throw new RuntimeException("Invalid password");
         }
-
-        // Kyunki hum save hi tab kar rahe hain jab verify ho gaya, to ye check hata bhi sakte ho
-        // lekin safety ke liye rehne do
         if (!authUser.isEmailVerified()) {
             throw new RuntimeException("Please verify email first");
         }
 
         return "Login successful";
     }
-
-    //Baaki methods (Update Email etc) same rahenge ...
     public AuthUser findByEmail(String email) {
         return authUserRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Auth user not found"));
@@ -145,15 +127,9 @@ public class AuthService {
         if (authUserRepository.findByEmail(newEmail).isPresent()) {
             throw new RuntimeException("This new email is already registered!");
         }
-
-        // 2. OTP Generate karo
         int otp = new Random().nextInt(900000) + 100000;
-
-        // 3. Store in maps
-        otpStore.put(newEmail, otp); // Naye email par OTP check hoga
-        pendingEmailUpdates.put(loggedInEmail, newEmail); // Yaad rakho kisne change kiya
-
-        // 4. Send OTP to NEW Email
+        otpStore.put(newEmail, otp); 
+        pendingEmailUpdates.put(loggedInEmail, newEmail);
         emailService.sendOtpEmail(newEmail, otp);
 
         return "Verification OTP sent to your new email: " + newEmail;
@@ -165,16 +141,11 @@ public class AuthService {
         if (storedOtp == null || !storedOtp.equals(otp)) {
             throw new RuntimeException("Invalid or Expired OTP");
         }
-
-        // Database se purana user nikalo
+        
         AuthUser user = authUserRepository.findByEmail(currentEmail)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-
-        // Update Email
         user.setEmail(newEmail);
         authUserRepository.save(user);
-
-        // Cleanup
         otpStore.remove(newEmail);
         pendingEmailUpdates.remove(currentEmail);
 
