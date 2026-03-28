@@ -22,15 +22,11 @@ public class User {
 
     private int age;
 
-//    @Column(unique = true)
-//    private String emailId;
-
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
     private String mobileNo;
 
-    // 🔗 Link to AuthUser
     @JsonIgnore
     @OneToOne
     @JoinColumn(name = "auth_user_id", nullable = false)
@@ -45,12 +41,5 @@ public class User {
    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
     private List<Appointment> appointmentList = new ArrayList<>();
 
-//    //NEW FIELD for OTP (transient: not saved in DB)
-//    @Transient
-//    private Integer otp;
-
-//    //OTP verification status (DB me save hoga)
-//    @Column(nullable = false)
-//    private boolean isVerified = false;
 
 }
