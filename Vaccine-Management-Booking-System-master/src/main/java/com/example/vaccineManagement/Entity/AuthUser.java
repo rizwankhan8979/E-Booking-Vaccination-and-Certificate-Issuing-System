@@ -24,8 +24,6 @@ public class AuthUser {
 
     private boolean emailVerified = false;
 
-    // Yeh mapping add ki hai user details fetch karne ke liye
-    // mappedBy ka matlab hai ki foreign key 'User' table mein hai
     @OneToOne(mappedBy = "authUser", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private User user;
 }
