@@ -33,9 +33,8 @@ public class Doctor {
     @Column(unique = true, nullable = false)
     private String emailId;
 
-    // RELATION WITH VACCINATION CENTER
     @ManyToOne
-    @JoinColumn(name = "center_id") // foreign key column name in doctor table
+    @JoinColumn(name = "center_id")
     @JsonIgnore
     private VaccinationCenter vaccinationCenter;
 
