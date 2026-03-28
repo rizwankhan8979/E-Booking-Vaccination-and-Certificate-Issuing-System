@@ -16,19 +16,14 @@ public class VaccinationService {
 
     public String addVaccinationCenter(VaccinationCenter vaccinationCenter) throws VaccinationAddressNotFound {
 
-        // 1. Address Validation (Pehle se maujood)
         if (vaccinationCenter.getAddress() == null) {
             throw new VaccinationAddressNotFound("Vaccination Address is Empty");
         }
-
-        // 2. Dose Capacity Range Check (Min 2, Max 4)
         int capacity = vaccinationCenter.getDoseCapacity();
 
         if (capacity < 2 || capacity > 4) {
             throw new RuntimeException("Dose capacity must be between 2 and 4 only!");
         }
-
-        // 3. Save to Database
         vaccinationCenterRepository.save(vaccinationCenter);
 
         return "Vaccination center added at a location " + vaccinationCenter.getAddress();
