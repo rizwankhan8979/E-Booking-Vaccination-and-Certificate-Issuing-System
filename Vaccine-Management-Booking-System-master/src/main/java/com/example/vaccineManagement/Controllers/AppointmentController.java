@@ -13,6 +13,7 @@ public class AppointmentController {
     @Autowired
     AppointmentService appointmentService;
 
+    //BOOK APPOINTMENT AFTER REGISTER USER
     @PostMapping("/book")
     public String bookAppointment(@RequestBody AppointmentReqDto appointmentReqDto) {
 

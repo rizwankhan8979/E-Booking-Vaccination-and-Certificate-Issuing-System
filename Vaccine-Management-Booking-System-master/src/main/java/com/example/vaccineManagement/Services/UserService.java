@@ -19,10 +19,15 @@ public class UserService {
     private AuthUserRepository authUserRepository;
 
     public User addUser(User user, String loggedInEmail) {
+<<<<<<< HEAD
         
         AuthUser authUser = authUserRepository.findByEmail(loggedInEmail)
                 .orElseThrow(() -> new RuntimeException("Auth user not found"));
 
+=======
+        AuthUser authUser = authUserRepository.findByEmail(loggedInEmail)
+                .orElseThrow(() -> new RuntimeException("Auth user not found"));
+>>>>>>> b4f768d (Updated backend After Create Apis)
         user.setAuthUser(authUser);
         return userRepository.save(user);
     }
@@ -37,16 +42,20 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("User profile not found"));
     }
 
-    // GET VACCINATION DATE
-    public Date getVaccDate(Integer userId) {
+    public List<Date> getVaccDate(String email) {
+        AuthUser authUser = authUserRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Auth user not found with email: " + email));
+        User user = userRepository.findByAuthUser(authUser)
+                .orElseThrow(() -> new RuntimeException("User profile not found for this user"));
+        List<Dose> doseList = user.getDoseList();
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        List<Date> dates = new ArrayList<>();
+        for(Dose dose : doseList) {
+            dates.add(dose.getVaccinationDate());
+        }
 
-        Dose dose = user.getDose();
-        return dose != null ? dose.getVaccinationDate() : null;
+        return dates;
     }
-
     // GET ALL USERS
     public List<User> getAllUsers() {
         return userRepository.findAll();

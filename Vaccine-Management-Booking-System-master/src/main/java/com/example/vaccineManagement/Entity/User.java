@@ -27,15 +27,21 @@ public class User {
 
     private String mobileNo;
 
+<<<<<<< HEAD
+=======
+    //check dose status
+    private boolean isVaccinated = false;
+
+    // 🔗 Link to AuthUser
+>>>>>>> b4f768d (Updated backend After Create Apis)
     @JsonIgnore
     @OneToOne
     @JoinColumn(name = "auth_user_id", nullable = false)
     private AuthUser authUser;
 
-
     @JsonIgnore
-    @OneToOne(mappedBy = "user",cascade = CascadeType.ALL)
-    private Dose dose;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Dose> doseList = new ArrayList<>();
 
     @JsonIgnore
    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)

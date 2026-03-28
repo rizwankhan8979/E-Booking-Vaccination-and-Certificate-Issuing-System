@@ -2,66 +2,43 @@ package com.example.vaccineManagement.Entity;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.util.Date;
 
 @Entity
 @Table(name = "dose")
+@Data
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class Dose {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id; //Primary Key
+    private int id;
 
     @Column(unique = true)
-    private String doseId; //Unique
+    private String doseId; // Unique ID (Auto-generate )
+
+    private int doseNumber; // 1 for Dose-1, 2 for Dose-2
+
+    @Column(nullable = false)
+    private String vialSerialNumber;
 
     @CreationTimestamp
     private Date vaccinationDate;
 
-    @OneToOne
+    @ManyToOne // one user have  multiple doses
     @JoinColumn
     @JsonIgnore
     private User user;
 
-    public User getUser() {
-        return user;
-    }
+    @ManyToOne
+    @JoinColumn
+    private Vaccine vaccine;
 
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getDoseId() {
-        return doseId;
-    }
-
-    public void setDoseId(String doseId) {
-        this.doseId = doseId;
-    }
-
-    public Date getVaccinationDate() {
-        return vaccinationDate;
-    }
-
-    public void setVaccinationDate(Date creationDate) {
-        this.vaccinationDate = creationDate;
-    }
 }

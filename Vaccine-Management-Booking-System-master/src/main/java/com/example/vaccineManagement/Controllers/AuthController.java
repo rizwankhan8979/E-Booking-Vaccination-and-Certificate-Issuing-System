@@ -7,6 +7,7 @@ import com.example.vaccineManagement.Services.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -61,7 +62,11 @@ public class AuthController {
         }
     }
 
+<<<<<<< HEAD
 
+=======
+    //USER LOGIN
+>>>>>>> b4f768d (Updated backend After Create Apis)
     @PostMapping("/login")
     public ResponseEntity<AuthResponseDto> login(@RequestBody LoginRequestDto dto) {
 
@@ -72,7 +77,14 @@ public class AuthController {
                 )
         );
 
-        String token = jwtService.generateToken(dto.getEmail());
+        //Take user from Database
+        AuthUser authUser = authService.findByEmail(dto.getEmail());
+
+        //token generate with roles
+        String token = jwtService.generateToken(
+                authUser.getEmail(),
+                authUser.getRole().name()
+        );
 
         return ResponseEntity.ok(
                 new AuthResponseDto("Login Successful", token)
@@ -98,7 +110,11 @@ public class AuthController {
         }
     }
 
+<<<<<<< HEAD
     //VERIFY UPDATE OTP 
+=======
+    //VERIFY UPDATE OTP FOR UPDATE EMAIL
+>>>>>>> b4f768d (Updated backend After Create Apis)
     @PostMapping("/verify-update-otp")
     public ResponseEntity<AuthResponseDto> verifyUpdateOtp(
             @AuthenticationPrincipal org.springframework.security.core.userdetails.User principal,
@@ -123,6 +139,7 @@ public class AuthController {
 
     //FIND BY EMAIL
     @GetMapping("/by-email/{email}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> findByEmail(@PathVariable String email) {
         try {
             AuthUser authUser = authService.findByEmail(email);

@@ -4,13 +4,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -47,6 +45,8 @@ public class SecurityConfig {
         return config.getAuthenticationManager();
     }
 
+
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -57,21 +57,21 @@ public class SecurityConfig {
                         )
                 )
                 .authorizeHttpRequests(auth -> auth
+                        //Public URLs (without login)
                         .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/vaccine/getAll",
-                                "/vaccine/get/**",
-                                "/vaccine/doctor/**").permitAll()
-                        .requestMatchers("/doctor/getAll",
-                                "/user/getAll").permitAll()
-                        .requestMatchers("/vaccinationCenter/getAll").permitAll()
-                        .requestMatchers("/dose/**").permitAll()
-                        .requestMatchers("/user/**",
-                                "/appointment/book")
-                        .hasAnyRole("USER", "ADMIN")
-                        .requestMatchers("/doctor/**",
-                                "/vaccinationCenter/**",
-                                "/vaccine/**")
-                        .hasRole("ADMIN")
+                        .requestMatchers("/vaccine/getAll", "/vaccine/get/**", "/vaccine/doctor/**").permitAll()
+                        .requestMatchers("/doctor/getAll", "/vaccinationCenter/getAll", "/vial/scan/**").permitAll()
+
+                        //specific Admin Roles
+                        .requestMatchers("/auth/by-email/**", "/user/getAll").hasRole("ADMIN")
+                        .requestMatchers("/doctor/**", "/vaccinationCenter/**", "/vaccine/**", "/vial/**").hasRole("ADMIN")
+
+
+                        //Secure APIs (Dose aur Appointment - Admin aur User dono ke liye)
+                        .requestMatchers("/dose/**").hasAnyRole("ADMIN", "USER")
+                        .requestMatchers("/appointment/**").hasAnyRole("ADMIN", "USER")
+                        .requestMatchers("/user/profile", "/user/getVaccinationDate").hasAnyRole("ADMIN", "USER")
+
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthFilter,
@@ -79,9 +79,14 @@ public class SecurityConfig {
                                 .UsernamePasswordAuthenticationFilter.class)
                 .httpBasic(b -> b.disable())
                 .formLogin(f -> f.disable());
+<<<<<<< HEAD
 
+=======
+>>>>>>> b4f768d (Updated backend After Create Apis)
         return http.build();
     }
+
+
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {

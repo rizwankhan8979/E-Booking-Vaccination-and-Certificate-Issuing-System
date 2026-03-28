@@ -26,7 +26,6 @@ public class DoctorService {
 
     public String addDoctor(Doctor doctor)throws EmailIdEmptyException, DoctorAlreadyExistsException {
 
-        //Validations part is over :
         if(doctor.getEmailId()==null){
             throw new EmailIdEmptyException("Email id is mandatory");
         }
@@ -62,9 +61,7 @@ public class DoctorService {
         VaccinationCenter vaccinationCenter = optionalCenter.get();
         doctor.setVaccinationCenter(vaccinationCenter);
         vaccinationCenter.getDoctorList().add(doctor);
-
         centerRepository.save(vaccinationCenter);
-
         return "Doctor has been associated to center";
 
     }

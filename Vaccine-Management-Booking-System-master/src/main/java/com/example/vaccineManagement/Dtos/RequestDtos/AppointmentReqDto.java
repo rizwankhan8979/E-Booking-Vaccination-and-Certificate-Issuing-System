@@ -9,7 +9,7 @@ public class AppointmentReqDto {
 
     private Integer docId;
     private Integer vaccineId;
-    private Integer userId;
+
     private Date appointmentDate;
     private LocalTime appointmentTime;
 }

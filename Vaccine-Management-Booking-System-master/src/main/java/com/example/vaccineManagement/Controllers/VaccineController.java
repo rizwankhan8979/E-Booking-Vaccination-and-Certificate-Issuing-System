@@ -17,7 +17,7 @@ public class VaccineController {
     @Autowired
     private VaccineService vaccineService;
 
-    // 1. Add vaccine (without doctor)
+    //ADD VACCINE
     @PostMapping("/add")
     public ResponseEntity<String> addVaccine(@RequestBody Vaccine vaccine) {
         try {
@@ -28,7 +28,7 @@ public class VaccineController {
         }
     }
 
-    // 2. Associate existing vaccine with doctor
+    // Associate existing vaccine with doctor
     @PostMapping("/associate/{vaccineId}/doctor/{doctorId}")
     public ResponseEntity<String> associateVaccine(@PathVariable int vaccineId,
             @PathVariable int doctorId) {
@@ -40,14 +40,14 @@ public class VaccineController {
         }
     }
 
-    // 3. Get all vaccines
+    //Get all vaccines
     @GetMapping("/getAll")
     public ResponseEntity<List<Vaccine>> getAllVaccines() {
         List<Vaccine> list = vaccineService.getAllVaccines();
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
 
-    // 4. Get vaccine by ID
+    //Get vaccine by ID
     @GetMapping("/get/{id}")
     public ResponseEntity<Vaccine> getVaccineById(@PathVariable int id) {
         try {
@@ -58,10 +58,21 @@ public class VaccineController {
         }
     }
 
-    // 5. Get vaccines of a doctor
+    //Get vaccines of a doctor
     @GetMapping("/doctor/{doctorId}")
     public ResponseEntity<List<Vaccine>> getVaccinesByDoctor(@PathVariable int doctorId) {
         List<Vaccine> list = vaccineService.getVaccinesByDoctorId(doctorId);
         return new ResponseEntity<>(list, HttpStatus.OK);
+    }
+
+    // Update Vaccine
+    @PutMapping("/update/{id}")
+    public ResponseEntity<String> updateVaccine(@PathVariable int id, @RequestBody Vaccine vaccine) {
+        try {
+            String result = vaccineService.updateVaccine(id, vaccine);
+            return new ResponseEntity<>(result, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 }

@@ -17,11 +17,12 @@ import java.util.List;
 @RestController
 @RequestMapping("/vaccinationCenter")
 @CrossOrigin
-public class VaccinationController {
+public class Vaccination_Centers_Controller {
 
     @Autowired
     public VaccinationService vaccinationService;
 
+    //ADD VACCINE CENTER
     @PostMapping("/add")
     public ResponseEntity<String> addCenter(@RequestBody VaccinationCenter vaccinationCenter) {
 
@@ -34,6 +35,7 @@ public class VaccinationController {
 
     }
 
+    //GET ALL VACCINE CENTER
     @GetMapping("/getAll")
     public ResponseEntity<List<VaccinationCenter>> getAllCenters() {
         try {

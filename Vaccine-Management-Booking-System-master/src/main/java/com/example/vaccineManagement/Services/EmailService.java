@@ -32,4 +32,28 @@ public class EmailService {
             e.printStackTrace();
         }
     }
+
+    public void sendVaccinationEmail(String toEmail, String userName, int doseNumber, String batchNumber, String vialNumber, String date) {
+        try {
+            SimpleMailMessage mailMessage = new SimpleMailMessage();
+            mailMessage.setFrom("spring.mail.username"); // or specific email
+            mailMessage.setTo(toEmail);
+            mailMessage.setSubject("Vaccination Successful - Dose " + doseNumber);
+
+            String text = "Dear " + userName + ",\n\n"
+                    + "Congratulations! Your " + (doseNumber == 1 ? "1st" : "2nd") + " dose has been successfully administered.\n\n"
+                    + "Here are your vaccination details:\n"
+                    + "- Vaccine Batch Number: " + batchNumber + "\n"
+                    + "- Vial Barcode: " + vialNumber + "\n"
+                    + "- Date & Time: " + date + "\n\n"
+                    + "Thank you for getting vaccinated and staying safely protected!\n\n"
+                    + "Regards,\nE-Booking Vaccination Certification System";
+
+            mailMessage.setText(text);
+            mailSender.send(mailMessage);
+            System.out.println("Vaccination Email sent successfully to: " + toEmail);
+        } catch (Exception e) {
+            System.out.println("Failed to send email to " + toEmail + ". Reason: " + e.getMessage());
+        }
+    }
 }

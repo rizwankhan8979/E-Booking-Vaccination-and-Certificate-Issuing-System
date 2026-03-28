@@ -30,20 +30,19 @@ public class AuthService {
     private final Map<String, Integer> otpStore = new ConcurrentHashMap<>();
     private final Map<String, AuthUser> tempUserStore = new ConcurrentHashMap<>();
 
-    //Register Send Otp not save in Database
     public String register(RegisterRequestDto dto) {
         if (authUserRepository.findByEmail(dto.getEmail()).isPresent()) {
             throw new RuntimeException("Email already registered and verified!");
         }
 
-        // Object banao, lekin SAVE MAT KARO
+        // create object but not save
         AuthUser authUser = new AuthUser();
         authUser.setEmail(dto.getEmail());
         authUser.setPassword(passwordEncoder.encode(dto.getPassword()));
         authUser.setRole(Role.USER);
         authUser.setEmailVerified(true);
 
-        // OTP Generate karo
+        //Generate Otp
         int otp = new Random().nextInt(900000) + 100000;
         otpStore.put(dto.getEmail(), otp);
         tempUserStore.put(dto.getEmail(), authUser);
@@ -55,7 +54,10 @@ public class AuthService {
     public String verifyEmail(String email, int otp) {
         Integer storedOtp = otpStore.get(email);
         AuthUser tempUser = tempUserStore.get(email);
+<<<<<<< HEAD
 
+=======
+>>>>>>> b4f768d (Updated backend After Create Apis)
         System.out.println("DEBUGGING OTP VERIFICATION ");
         System.out.println("Email: " + email);
         System.out.println("Stored OTP (Server ke paas): " + storedOtp);
@@ -66,7 +68,7 @@ public class AuthService {
             System.out.println("👤 User Data Found in Temp Store:");
             System.out.println("   -> Email: " + tempUser.getEmail());
             System.out.println("   -> Role: " + tempUser.getRole());
-            System.out.println("   -> Password (Hash): " + tempUser.getPassword()); // Encrypted password dikhega
+            System.out.println("   -> Password (Hash): " + tempUser.getPassword()); // Encrypted password
             System.out.println("   -> Is Verified?: " + tempUser.isEmailVerified()); // Should be true
         } else {
             System.out.println("User Data is NULL (Shayad Register nahi kiya ya Server restart hua)");
@@ -90,7 +92,10 @@ public class AuthService {
         if (tempUser == null) {
             throw new RuntimeException("Session expired, please register again");
         }
+<<<<<<< HEAD
         
+=======
+>>>>>>> b4f768d (Updated backend After Create Apis)
         authUserRepository.save(tempUser);
         otpStore.remove(email);
         tempUserStore.remove(email);
@@ -112,24 +117,38 @@ public class AuthService {
 
         return "Login successful";
     }
+<<<<<<< HEAD
+=======
+
+>>>>>>> b4f768d (Updated backend After Create Apis)
     public AuthUser findByEmail(String email) {
         return authUserRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Auth user not found"));
     }
 
-    // Isme store hoga: puranaEmail -> nayaEmail
     private final Map<String, String> pendingEmailUpdates = new ConcurrentHashMap<>();
 
     public String updateEmail(String loggedInEmail, UpdateEmailRequestDto dto) {
         String newEmail = dto.getNewEmail();
 
-        // 1. Check if new email is already taken in DB
         if (authUserRepository.findByEmail(newEmail).isPresent()) {
             throw new RuntimeException("This new email is already registered!");
         }
+<<<<<<< HEAD
         int otp = new Random().nextInt(900000) + 100000;
         otpStore.put(newEmail, otp); 
         pendingEmailUpdates.put(loggedInEmail, newEmail);
+=======
+
+        //OTP Generate karo
+        int otp = new Random().nextInt(900000) + 100000;
+
+        // 3. Store in maps
+        otpStore.put(newEmail, otp);
+        pendingEmailUpdates.put(loggedInEmail, newEmail);
+
+        // 4. Send OTP to NEW Email
+>>>>>>> b4f768d (Updated backend After Create Apis)
         emailService.sendOtpEmail(newEmail, otp);
 
         return "Verification OTP sent to your new email: " + newEmail;
@@ -141,7 +160,11 @@ public class AuthService {
         if (storedOtp == null || !storedOtp.equals(otp)) {
             throw new RuntimeException("Invalid or Expired OTP");
         }
+<<<<<<< HEAD
         
+=======
+
+>>>>>>> b4f768d (Updated backend After Create Apis)
         AuthUser user = authUserRepository.findByEmail(currentEmail)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         user.setEmail(newEmail);

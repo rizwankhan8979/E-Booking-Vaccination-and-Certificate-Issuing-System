@@ -17,6 +17,7 @@ public class DoctorController {
     @Autowired
     private DoctorService doctorService;
 
+    //ADD DOCTOR ONLY ADMIN ROLE
     @PostMapping("/add")
     public String addDoctor(@RequestBody Doctor doctor){
 
@@ -29,6 +30,7 @@ public class DoctorController {
 
     }
 
+    //LINK DOCTOR INTO CENTER
     @PostMapping("/associateWithCenter")
     public ResponseEntity<String> associateDoctor(@RequestBody AssociateDocDto associateDocDto){
 
@@ -40,7 +42,11 @@ public class DoctorController {
         }
     }
 
+<<<<<<< HEAD
     // doctor List 
+=======
+    // GET ALL DOCTOR LIST
+>>>>>>> b4f768d (Updated backend After Create Apis)
     @GetMapping("/getAll")
     public ResponseEntity<List<Doctor>> getAllDoctors(){
 
