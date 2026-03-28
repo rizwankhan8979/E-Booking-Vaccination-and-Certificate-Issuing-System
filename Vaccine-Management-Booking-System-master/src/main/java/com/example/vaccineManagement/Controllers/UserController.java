@@ -16,12 +16,11 @@ public class UserController {
     @Autowired
     UserService userService;
 
-    // COMPLETE PROFILE
+    // Add PROFILE
     @PostMapping("/add")
     public User addUser(
             @RequestBody User user,
             @AuthenticationPrincipal org.springframework.security.core.userdetails.User principal) {
-        // principal reopening logged-in email
         return userService.addUser(user, principal.getUsername());
     }
 
