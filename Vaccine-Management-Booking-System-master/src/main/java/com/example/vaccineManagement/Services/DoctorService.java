@@ -60,9 +60,7 @@ public class DoctorService {
 
         Doctor doctor = doctorOptional.get();
         VaccinationCenter vaccinationCenter = optionalCenter.get();
-        doctor.setVaccinationCenter(vaccinationCenter); //Setting the foreign
-        //Set the bidirectional map
-        //Adding this doctor the list of doctors of that vaccination Center
+        doctor.setVaccinationCenter(vaccinationCenter);
         vaccinationCenter.getDoctorList().add(doctor);
 
         centerRepository.save(vaccinationCenter);
@@ -72,8 +70,6 @@ public class DoctorService {
     }
 
     public List<Doctor> getAllDoctors(){
-
-        // findAll() method JpaRepository se aata hai aur saare doctors ki list return karta hai
         List<Doctor> doctorList = doctorRepository.findAll();
         return doctorList;
     }
