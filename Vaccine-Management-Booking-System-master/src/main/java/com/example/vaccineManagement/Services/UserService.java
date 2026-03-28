@@ -16,19 +16,14 @@ public class UserService {
     private UserRepository userRepository;
 
     @Autowired
-    private AuthUserRepository authUserRepository;// NEW: For sending OTP emails
+    private AuthUserRepository authUserRepository;
 
-    // COMPLETE PROFILE
     public User addUser(User user, String loggedInEmail) {
-
-        // logged-in auth user nikaalo
+        
         AuthUser authUser = authUserRepository.findByEmail(loggedInEmail)
                 .orElseThrow(() -> new RuntimeException("Auth user not found"));
 
-        // link profile with auth user
         user.setAuthUser(authUser);
-
-        // save profile
         return userRepository.save(user);
     }
 
