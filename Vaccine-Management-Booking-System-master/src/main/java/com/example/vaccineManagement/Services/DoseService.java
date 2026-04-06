@@ -25,6 +25,9 @@ public class DoseService {
     com.example.vaccineManagement.Repository.VialRepository vialRepository;
 
     @Autowired
+    com.example.vaccineManagement.Repository.DoctorRepository doctorRepository;
+
+    @Autowired
     EmailService emailService;
 
     public com.example.vaccineManagement.Dtos.ResponseDtos.DoseResponseDto giveDose(com.example.vaccineManagement.Dtos.RequestDtos.DoseRequestDto doseRequestDto) {
@@ -39,17 +42,8 @@ public class DoseService {
             throw new RuntimeException("Error: Vaccine name mismatch! The connected Batch is for " + vaccine.getVaccineName());
         }
 
-<<<<<<< HEAD
-        Dose dose = new Dose();
-        dose.setDoseId(doseId);
-        dose.setUser(user);
-        user.setDose(dose);
-        userRepository.save(user);
 
-        return "Dose Given to user successfully";
-=======
-        // ADVANCED TRACKING BY VACCINE NAME
-        // Count ONLY doses where the vaccine name matches!
+
         int currentDoses = (int) user.getDoseList().stream()
                 .filter(d -> d.getVaccine().getVaccineName().equalsIgnoreCase(doseRequestDto.getVaccineName()))
                 .count();
@@ -58,10 +52,10 @@ public class DoseService {
             throw new RuntimeException("User is already fully vaccinated for " + doseRequestDto.getVaccineName() + "!");
         }
 
-        // VIAL TRACKING LOGIC
-        // Find the specific vial by barcode
-        com.example.vaccineManagement.Entity.Vial vialToUse = vialRepository.findByVialNumber(doseRequestDto.getVialNumber())
-                .orElseThrow(() -> new RuntimeException("Error: Vial not found with tracking number: " + doseRequestDto.getVialNumber()));
+        // VIAL TRACKING LOGIC (Sanitize input with Trim and UpperCase to avoid mismatch)
+        String sanitizedVialNo = doseRequestDto.getVialNumber().trim().toUpperCase();
+        com.example.vaccineManagement.Entity.Vial vialToUse = vialRepository.findByVialNumber(sanitizedVialNo)
+                .orElseThrow(() -> new RuntimeException("Error: Vial not found with tracking number: " + sanitizedVialNo));
 
         if (vialToUse.getRemainingDoses() <= 0 || vialToUse.getStatus() == com.example.vaccineManagement.Enums.VialStatus.EMPTY) {
             throw new RuntimeException("Error: This vial is already empty!");
@@ -90,6 +84,13 @@ public class DoseService {
         // Assign specific vial number to this dose record
         dose.setVialSerialNumber(vialToUse.getVialNumber());
 
+        // Assign administering doctor
+        if (doseRequestDto.getDocId() != null) {
+            com.example.vaccineManagement.Entity.Doctor doctor = doctorRepository.findById(doseRequestDto.getDocId())
+                    .orElseThrow(() -> new RuntimeException("Doctor not found"));
+            dose.setDoctor(doctor);
+        }
+
         dose.setUser(user);
         dose.setVaccine(vaccine);
         doseRepository.save(dose);
@@ -100,17 +101,24 @@ public class DoseService {
             userRepository.save(user);
         }
 
-        // Construct formatting date
-        String formattedDate = java.time.LocalDateTime.now().toString();
+        // Format Date and Time separately
+        java.time.LocalDateTime now = java.time.LocalDateTime.now();
+        String formattedDate = now.format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        String formattedTime = now.format(java.time.format.DateTimeFormatter.ofPattern("HH:mm"));
+
+        // Get Doctor Name for Email
+        String adminDoctorName = dose.getDoctor() != null ? dose.getDoctor().getName() : "General Staff";
 
         // Send Email
         emailService.sendVaccinationEmail(
-                user.getAuthUser().getEmail(), 
-                user.getName(), 
-                dose.getDoseNumber(), 
-                vaccine.getBatchNumber(), 
-                vialToUse.getVialNumber(), 
-                formattedDate
+                user.getAuthUser().getEmail(),
+                user.getName(),
+                dose.getDoseNumber(),
+                vaccine.getBatchNumber(),
+                vialToUse.getVialNumber(),
+                formattedDate,
+                formattedTime,
+                adminDoctorName
         );
 
         // Construct detailed JSON response
@@ -124,6 +132,5 @@ public class DoseService {
                 .vialNumber(vialToUse.getVialNumber())
                 .vaccinationDate(new java.util.Date())
                 .build();
->>>>>>> b4f768d (Updated backend After Create Apis)
     }
 }

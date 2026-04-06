@@ -33,12 +33,12 @@ public class AuthController {
             System.out.println("This is the FDto Data "+dto);
             String result = authService.register(dto);
             return new ResponseEntity<>(
-                    new AuthResponseDto(result, null),
+                    new AuthResponseDto(result, null, null),
                     HttpStatus.CREATED
             );
         } catch (Exception e) {
             return new ResponseEntity<>(
-                    new AuthResponseDto(e.getMessage(), null),
+                    new AuthResponseDto(e.getMessage(), null, null),
                     HttpStatus.BAD_REQUEST
             );
         }
@@ -51,22 +51,18 @@ public class AuthController {
         try {
             String msg = authService.verifyEmail(dto.getEmail(), dto.getOtp());
             return new ResponseEntity<>(
-                    new AuthResponseDto(msg, null),
+                    new AuthResponseDto(msg, null, null),
                     HttpStatus.OK
             );
         } catch (Exception e) {
             return new ResponseEntity<>(
-                    new AuthResponseDto(e.getMessage(), null),
+                    new AuthResponseDto(e.getMessage(), null, null),
                     HttpStatus.BAD_REQUEST
             );
         }
     }
 
-<<<<<<< HEAD
-
-=======
     //USER LOGIN
->>>>>>> b4f768d (Updated backend After Create Apis)
     @PostMapping("/login")
     public ResponseEntity<AuthResponseDto> login(@RequestBody LoginRequestDto dto) {
 
@@ -87,7 +83,7 @@ public class AuthController {
         );
 
         return ResponseEntity.ok(
-                new AuthResponseDto("Login Successful", token)
+                new AuthResponseDto("Login Successful", token, authUser.getRole().name())
         );
     }
 
@@ -99,22 +95,18 @@ public class AuthController {
         try {
             String result = authService.updateEmail(principal.getUsername(), dto);
             return new ResponseEntity<>(
-                    new AuthResponseDto(result, null),
+                    new AuthResponseDto(result, null, null),
                     HttpStatus.OK
             );
         } catch (Exception e) {
             return new ResponseEntity<>(
-                    new AuthResponseDto(e.getMessage(), null),
+                    new AuthResponseDto(e.getMessage(), null, null),
                     HttpStatus.BAD_REQUEST
             );
         }
     }
 
-<<<<<<< HEAD
-    //VERIFY UPDATE OTP 
-=======
     //VERIFY UPDATE OTP FOR UPDATE EMAIL
->>>>>>> b4f768d (Updated backend After Create Apis)
     @PostMapping("/verify-update-otp")
     public ResponseEntity<AuthResponseDto> verifyUpdateOtp(
             @AuthenticationPrincipal org.springframework.security.core.userdetails.User principal,
@@ -126,12 +118,12 @@ public class AuthController {
                     dto.getOtp()
             );
             return new ResponseEntity<>(
-                    new AuthResponseDto(result, null),
+                    new AuthResponseDto(result, null, null),
                     HttpStatus.OK
             );
         } catch (Exception e) {
             return new ResponseEntity<>(
-                    new AuthResponseDto(e.getMessage(), null),
+                    new AuthResponseDto(e.getMessage(), null, null),
                     HttpStatus.BAD_REQUEST
             );
         }
@@ -146,8 +138,47 @@ public class AuthController {
             return new ResponseEntity<>(authUser, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(
-                    new AuthResponseDto(e.getMessage(), null),
+                    new AuthResponseDto(e.getMessage(), null, null),
                     HttpStatus.NOT_FOUND
+            );
+        }
+    }
+
+    // FORGOT PASSWORD REQUEST
+    @PostMapping("/forgot-password-request")
+    public ResponseEntity<AuthResponseDto> forgotPasswordRequest(@RequestBody java.util.Map<String, String> request) {
+        try {
+            String email = request.get("email");
+            String result = authService.forgotPasswordRequest(email);
+            return new ResponseEntity<>(
+                    new AuthResponseDto(result, null, null),
+                    HttpStatus.OK
+            );
+        } catch (Exception e) {
+            return new ResponseEntity<>(
+                    new AuthResponseDto(e.getMessage(), null, null),
+                    HttpStatus.BAD_REQUEST
+            );
+        }
+    }
+
+    // RESET PASSWORD
+    @PostMapping("/reset-password")
+    public ResponseEntity<AuthResponseDto> resetPassword(@RequestBody java.util.Map<String, Object> request) {
+        try {
+            String email = (String) request.get("email");
+            int otp = Integer.parseInt(request.get("otp").toString());
+            String newPassword = (String) request.get("newPassword");
+            
+            String result = authService.resetPassword(email, otp, newPassword);
+            return new ResponseEntity<>(
+                    new AuthResponseDto(result, null, null),
+                    HttpStatus.OK
+            );
+        } catch (Exception e) {
+            return new ResponseEntity<>(
+                    new AuthResponseDto(e.getMessage(), null, null),
+                    HttpStatus.BAD_REQUEST
             );
         }
     }

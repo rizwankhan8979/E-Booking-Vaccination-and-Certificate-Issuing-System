@@ -5,7 +5,9 @@ import com.example.vaccineManagement.Services.VaccineService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import java.util.Map;
 
 import java.util.List;
 
@@ -19,18 +21,20 @@ public class VaccineController {
 
     //ADD VACCINE
     @PostMapping("/add")
-    public ResponseEntity<String> addVaccine(@RequestBody Vaccine vaccine) {
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> addVaccine(@RequestBody Vaccine vaccine) {
         try {
             String result = vaccineService.addVaccine(vaccine);
-            return new ResponseEntity<>(result, HttpStatus.CREATED);
+            return new ResponseEntity<>(Map.of("message", result), HttpStatus.CREATED);
         } catch (Exception e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(Map.of("message", e.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }
 
     // Associate existing vaccine with doctor
     @PostMapping("/associate/{vaccineId}/doctor/{doctorId}")
-    public ResponseEntity<String> associateVaccine(@PathVariable int vaccineId,
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> associateVaccine(@PathVariable int vaccineId,
             @PathVariable int doctorId) {
         try {
             String result = vaccineService.associateVaccineWithDoctor(vaccineId, doctorId);
@@ -67,12 +71,13 @@ public class VaccineController {
 
     // Update Vaccine
     @PutMapping("/update/{id}")
-    public ResponseEntity<String> updateVaccine(@PathVariable int id, @RequestBody Vaccine vaccine) {
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> updateVaccine(@PathVariable int id, @RequestBody Vaccine vaccine) {
         try {
             String result = vaccineService.updateVaccine(id, vaccine);
-            return new ResponseEntity<>(result, HttpStatus.OK);
+            return new ResponseEntity<>(Map.of("message", result), HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(Map.of("message", e.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }
 }

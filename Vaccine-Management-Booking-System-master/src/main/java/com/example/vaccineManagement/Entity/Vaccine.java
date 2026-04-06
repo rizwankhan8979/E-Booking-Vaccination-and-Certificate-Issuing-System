@@ -26,6 +26,7 @@ public class Vaccine {
     private String manufacturer;
     private int dosesRequired;
     private String ageRange;
+    private double price;
 
     @Column(unique = true, nullable = false)
     private String batchNumber; // Pure batch ka common ID
@@ -55,6 +56,6 @@ public class Vaccine {
     private Doctor doctor;
 
     // One Vaccine (Batch) has many Vials
-    @OneToMany(mappedBy = "vaccine", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "vaccine", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private java.util.List<Vial> vials = new java.util.ArrayList<>();
 }

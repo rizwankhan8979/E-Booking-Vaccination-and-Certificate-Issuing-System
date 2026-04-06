@@ -25,4 +25,15 @@ public class AppointmentController {
         }
     }
 
+    // GET MY BOOKINGS
+    @GetMapping("/my-bookings")
+    public org.springframework.http.ResponseEntity<?> getMyBookings() {
+        try {
+            java.util.List<java.util.Map<String, Object>> bookings = appointmentService.getMyBookings();
+            return org.springframework.http.ResponseEntity.ok(bookings);
+        } catch (Exception e) {
+            return org.springframework.http.ResponseEntity.badRequest().body(java.util.Map.of("message", e.getMessage()));
+        }
+    }
+
 }

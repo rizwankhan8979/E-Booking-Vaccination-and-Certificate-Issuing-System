@@ -21,11 +21,7 @@ public class VaccineService {
 
     @Autowired
     private DoctorRepository doctorRepository;
-<<<<<<< HEAD
-    
-=======
 
->>>>>>> b4f768d (Updated backend After Create Apis)
     public String addVaccine(Vaccine vaccine) {
         if (vaccine.getBatchNumber() == null || vaccine.getBatchNumber().trim().isEmpty()) {
             throw new RuntimeException("Error: Batch Number must be provided manually!");
@@ -120,6 +116,7 @@ public class VaccineService {
         if (updatedVaccine.getDosesRequired() > 0) existingVaccine.setDosesRequired(updatedVaccine.getDosesRequired());
         if (updatedVaccine.getAgeRange() != null) existingVaccine.setAgeRange(updatedVaccine.getAgeRange());
         if (updatedVaccine.getStatus() != null) existingVaccine.setStatus(updatedVaccine.getStatus());
+        if (updatedVaccine.getPrice() > 0) existingVaccine.setPrice(updatedVaccine.getPrice());
 
         // 3. Update capacities
         if (updatedVaccine.getTotalBatchCapacity() > 0) existingVaccine.setTotalBatchCapacity(updatedVaccine.getTotalBatchCapacity());

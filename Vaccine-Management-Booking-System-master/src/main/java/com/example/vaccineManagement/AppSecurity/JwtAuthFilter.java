@@ -3,6 +3,7 @@ package com.example.vaccineManagement.AppSecurity;
 
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
+import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -37,27 +38,36 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         }
 
         String token = authHeader.substring(7);
-        String email = jwtService.extractUsername(token);
+        try {
+            String email = jwtService.extractUsername(token);
 
-        if (email != null &&
-                SecurityContextHolder.getContext().getAuthentication() == null &&
-                jwtService.validateToken(token)) {
+            if (email != null &&
+                    SecurityContextHolder.getContext().getAuthentication() == null &&
+                    jwtService.validateToken(token)) {
 
-            var userDetails =
-                    userDetailsService.loadUserByUsername(email);
+                var userDetails =
+                        userDetailsService.loadUserByUsername(email);
 
-            var authToken =
-                    new UsernamePasswordAuthenticationToken(
-                            userDetails,
-                            null,
-                            userDetails.getAuthorities());
+                var authToken =
+                        new UsernamePasswordAuthenticationToken(
+                                userDetails,
+                                null,
+                                userDetails.getAuthorities());
 
-            authToken.setDetails(
-                    new WebAuthenticationDetailsSource()
-                            .buildDetails(request));
+                authToken.setDetails(
+                        new WebAuthenticationDetailsSource()
+                                .buildDetails(request));
 
-            SecurityContextHolder.getContext()
-                    .setAuthentication(authToken);
+                SecurityContextHolder.getContext()
+                        .setAuthentication(authToken);
+            }
+        } catch (ExpiredJwtException e) {
+            // Token is expired. We don't set the authentication but we don't throw an error.
+            // This allows the request to reach the permitAll() endpoints in SecurityConfig.
+            System.out.println("JWT token expired: " + e.getMessage());
+        } catch (Exception e) {
+            // Handle any other JWT-related issues silently
+            System.out.println("JWT validation failed: " + e.getMessage());
         }
 
         filterChain.doFilter(request, response);

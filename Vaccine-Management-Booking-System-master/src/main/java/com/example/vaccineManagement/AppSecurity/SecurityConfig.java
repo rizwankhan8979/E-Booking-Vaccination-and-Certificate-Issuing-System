@@ -50,6 +50,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                .cors(org.springframework.security.config.Customizer.withDefaults())
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(
@@ -57,6 +58,8 @@ public class SecurityConfig {
                         )
                 )
                 .authorizeHttpRequests(auth -> auth
+                        // Allow all OPTIONS requests globally for CORS preflight
+                        .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
                         //Public URLs (without login)
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/vaccine/getAll", "/vaccine/get/**", "/vaccine/doctor/**").permitAll()
@@ -67,7 +70,7 @@ public class SecurityConfig {
                         .requestMatchers("/doctor/**", "/vaccinationCenter/**", "/vaccine/**", "/vial/**").hasRole("ADMIN")
 
 
-                        //Secure APIs (Dose aur Appointment - Admin aur User dono ke liye)
+                        //Secure APIs
                         .requestMatchers("/dose/**").hasAnyRole("ADMIN", "USER")
                         .requestMatchers("/appointment/**").hasAnyRole("ADMIN", "USER")
                         .requestMatchers("/user/profile", "/user/getVaccinationDate").hasAnyRole("ADMIN", "USER")
@@ -79,10 +82,7 @@ public class SecurityConfig {
                                 .UsernamePasswordAuthenticationFilter.class)
                 .httpBasic(b -> b.disable())
                 .formLogin(f -> f.disable());
-<<<<<<< HEAD
 
-=======
->>>>>>> b4f768d (Updated backend After Create Apis)
         return http.build();
     }
 
@@ -91,7 +91,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://127.0.0.1:3000"));
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://127.0.0.1:3000", "http://10.151.31.105:3000"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);

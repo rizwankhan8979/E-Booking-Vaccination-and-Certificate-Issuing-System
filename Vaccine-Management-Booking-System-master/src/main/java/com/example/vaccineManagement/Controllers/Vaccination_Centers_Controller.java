@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.security.access.prepost.PreAuthorize;
+import java.util.Map;
 import java.util.List;
 
 @RestController
@@ -24,13 +26,15 @@ public class Vaccination_Centers_Controller {
 
     //ADD VACCINE CENTER
     @PostMapping("/add")
-    public ResponseEntity<String> addCenter(@RequestBody VaccinationCenter vaccinationCenter) {
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> addCenter(@RequestBody VaccinationCenter vaccinationCenter) {
 
         try {
             String result = vaccinationService.addVaccinationCenter(vaccinationCenter);
-            return new ResponseEntity<>(result, HttpStatus.OK);
-        } catch (VaccinationAddressNotFound e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(Map.of("message", result), HttpStatus.OK);
+        } catch (Exception e) {
+            String msg = e.getMessage() != null ? e.getMessage() : e.toString();
+            return new ResponseEntity<>(Map.of("message", msg), HttpStatus.BAD_REQUEST);
         }
 
     }

@@ -6,7 +6,9 @@ import com.example.vaccineManagement.Services.DoctorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import java.util.Map;
 import java.util.List;
 
 @RestController
@@ -19,20 +21,22 @@ public class DoctorController {
 
     //ADD DOCTOR ONLY ADMIN ROLE
     @PostMapping("/add")
-    public String addDoctor(@RequestBody Doctor doctor){
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> addDoctor(@RequestBody Doctor doctor){
 
         try {
             String response = doctorService.addDoctor(doctor);
-            return response;
+            return new ResponseEntity<>(Map.of("message", response), HttpStatus.OK);
         }catch (Exception e){
-            return e.getMessage();
+            return new ResponseEntity<>(Map.of("message", e.getMessage()), HttpStatus.BAD_REQUEST);
         }
 
     }
 
     //LINK DOCTOR INTO CENTER
     @PostMapping("/associateWithCenter")
-    public ResponseEntity<String> associateDoctor(@RequestBody AssociateDocDto associateDocDto){
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> associateDoctor(@RequestBody AssociateDocDto associateDocDto){
 
         try{
             String result = doctorService.associateDoctor(associateDocDto);
@@ -42,11 +46,7 @@ public class DoctorController {
         }
     }
 
-<<<<<<< HEAD
-    // doctor List 
-=======
     // GET ALL DOCTOR LIST
->>>>>>> b4f768d (Updated backend After Create Apis)
     @GetMapping("/getAll")
     public ResponseEntity<List<Doctor>> getAllDoctors(){
 

@@ -41,4 +41,8 @@ public class Dose {
     @JoinColumn
     private Vaccine vaccine;
 
+    @ManyToOne // Store who administered this specific dose
+    @JoinColumn(name = "doctor_id")
+    private Doctor doctor;
+
 }

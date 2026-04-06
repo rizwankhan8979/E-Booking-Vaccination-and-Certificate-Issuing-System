@@ -15,4 +15,5 @@ public class DoseRequestDto {
     private String vaccineName;
     private String batchNumber;
     private String vialNumber;
+    private Integer docId; // ID of the doctor who administered the dose
 }

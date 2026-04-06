@@ -24,6 +24,7 @@ public class DoctorService {
     @Autowired
     private VaccinationCenterRepository centerRepository;
 
+    //Add Doctir data here
     public String addDoctor(Doctor doctor)throws EmailIdEmptyException, DoctorAlreadyExistsException {
 
         if(doctor.getEmailId()==null){
@@ -39,7 +40,10 @@ public class DoctorService {
         return "Doctor has been added to the database";
     }
 
-    public String associateDoctor(AssociateDocDto associateDocDto)throws DoctorNotFound, CenterNotFound {
+
+//functio for Associate doctor with center
+    public String associateDoctor(AssociateDocDto associateDocDto)throws DoctorNotFound,
+            CenterNotFound {
 
         Integer docId = associateDocDto.getDocId();
 
@@ -66,6 +70,7 @@ public class DoctorService {
 
     }
 
+    //fetch all Doctor for display on the Deshboard
     public List<Doctor> getAllDoctors(){
         List<Doctor> doctorList = doctorRepository.findAll();
         return doctorList;

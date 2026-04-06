@@ -20,6 +20,7 @@ public class VialController {
     // Scan / Fetch single vial details by tracking barcode
     @GetMapping("/scan/{vialNumber}")
     public ResponseEntity<?> scanVial(@PathVariable String vialNumber) {
+        System.out.println("-------> SCAN VIAL API HIT FROM FRONTEND! VIAL NO: " + vialNumber + " <-------");
         Optional<Vial> vialOpt = vialRepository.findByVialNumber(vialNumber);
         if (vialOpt.isPresent()) {
             return new ResponseEntity<>(vialOpt.get(), HttpStatus.OK);

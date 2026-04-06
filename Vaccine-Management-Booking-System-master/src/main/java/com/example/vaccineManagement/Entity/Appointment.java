@@ -33,13 +33,7 @@ public class Appointment {
 
     @ManyToOne
     @JoinColumn
-<<<<<<< HEAD
-    private Vaccine vaccine; 
-    
-=======
     private Vaccine vaccine;
-
->>>>>>> b4f768d (Updated backend After Create Apis)
     @JsonIgnore
     @ManyToOne
     @JoinColumn

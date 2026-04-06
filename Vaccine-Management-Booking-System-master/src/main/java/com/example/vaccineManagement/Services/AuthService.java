@@ -54,10 +54,7 @@ public class AuthService {
     public String verifyEmail(String email, int otp) {
         Integer storedOtp = otpStore.get(email);
         AuthUser tempUser = tempUserStore.get(email);
-<<<<<<< HEAD
 
-=======
->>>>>>> b4f768d (Updated backend After Create Apis)
         System.out.println("DEBUGGING OTP VERIFICATION ");
         System.out.println("Email: " + email);
         System.out.println("Stored OTP (Server ke paas): " + storedOtp);
@@ -92,10 +89,7 @@ public class AuthService {
         if (tempUser == null) {
             throw new RuntimeException("Session expired, please register again");
         }
-<<<<<<< HEAD
-        
-=======
->>>>>>> b4f768d (Updated backend After Create Apis)
+
         authUserRepository.save(tempUser);
         otpStore.remove(email);
         tempUserStore.remove(email);
@@ -117,10 +111,7 @@ public class AuthService {
 
         return "Login successful";
     }
-<<<<<<< HEAD
-=======
 
->>>>>>> b4f768d (Updated backend After Create Apis)
     public AuthUser findByEmail(String email) {
         return authUserRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Auth user not found"));
@@ -134,12 +125,6 @@ public class AuthService {
         if (authUserRepository.findByEmail(newEmail).isPresent()) {
             throw new RuntimeException("This new email is already registered!");
         }
-<<<<<<< HEAD
-        int otp = new Random().nextInt(900000) + 100000;
-        otpStore.put(newEmail, otp); 
-        pendingEmailUpdates.put(loggedInEmail, newEmail);
-=======
-
         //OTP Generate karo
         int otp = new Random().nextInt(900000) + 100000;
 
@@ -148,7 +133,6 @@ public class AuthService {
         pendingEmailUpdates.put(loggedInEmail, newEmail);
 
         // 4. Send OTP to NEW Email
->>>>>>> b4f768d (Updated backend After Create Apis)
         emailService.sendOtpEmail(newEmail, otp);
 
         return "Verification OTP sent to your new email: " + newEmail;
@@ -160,11 +144,7 @@ public class AuthService {
         if (storedOtp == null || !storedOtp.equals(otp)) {
             throw new RuntimeException("Invalid or Expired OTP");
         }
-<<<<<<< HEAD
-        
-=======
 
->>>>>>> b4f768d (Updated backend After Create Apis)
         AuthUser user = authUserRepository.findByEmail(currentEmail)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         user.setEmail(newEmail);
@@ -173,5 +153,34 @@ public class AuthService {
         pendingEmailUpdates.remove(currentEmail);
 
         return "Email updated successfully to " + newEmail;
+    }
+
+    // FORGOT PASSWORD REQUEST
+    public String forgotPasswordRequest(String email) {
+        AuthUser authUser = authUserRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Sorry, this email is not registered"));
+        
+        int otp = new Random().nextInt(900000) + 100000;
+        otpStore.put(email, otp);
+        emailService.sendOtpEmail(email, otp);
+        
+        return "OTP sent successfully to your registered email";
+    }
+
+    // RESET PASSWORD VERIFICATION
+    public String resetPassword(String email, int otp, String newPassword) {
+        Integer storedOtp = otpStore.get(email);
+        if (storedOtp == null || !storedOtp.equals(otp)) {
+            throw new RuntimeException("Invalid or Expired OTP");
+        }
+        
+        AuthUser authUser = authUserRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+                
+        authUser.setPassword(passwordEncoder.encode(newPassword));
+        authUserRepository.save(authUser);
+        
+        otpStore.remove(email);
+        return "Password reset successfully. You can now login.";
     }
 }
